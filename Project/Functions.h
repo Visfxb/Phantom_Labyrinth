@@ -5,7 +5,7 @@
 
 
 
-void movePlayer(char arr[16][40], int& x, int& y, int step_x, int step_y, int& coins, bool& isCoinOnMap, int coin_pos_x, int coin_pos_y, int map_step_x = 0, int map_step_y = 0) {
+void movePlayer(char** arr, int& x, int& y, int step_x, int step_y, int& coins, bool& isCoinOnMap, int coin_pos_x, int coin_pos_y, int map_step_x = 0, int map_step_y = 0) {
     if (arr[x + step_x][y + step_y] != '-' && arr[x + step_x][y + step_y] != '|' && arr[x + step_x][y + step_y] != '+') {
         if (x + step_x == coin_pos_x && y + step_y == coin_pos_y) {
             coins++;
@@ -22,7 +22,7 @@ void movePlayer(char arr[16][40], int& x, int& y, int step_x, int step_y, int& c
 
 
 
-char chooseGhostDirection(char arr[16][40], int x, int y, char vector) {
+char chooseGhostDirection(char** arr, int x, int y, char vector) {
     int size = 0;
     char* rand_direc = new char[size];
     if (arr[x - 1][y] != '|' && arr[x - 1][y] != '-' && arr[x - 1][y] != '+') {
@@ -60,7 +60,7 @@ char chooseGhostDirection(char arr[16][40], int x, int y, char vector) {
 
 
 
-bool isWallNext(char arr[16][40], int x, int y, char vector) {
+bool isWallNext(char** arr, int x, int y, char vector) {
     switch (vector)
     {
     case 'w':
@@ -80,7 +80,7 @@ bool isWallNext(char arr[16][40], int x, int y, char vector) {
 
 
 
-void moveGhost(char arr[16][40], int& ghost_x, int& ghost_y, char vector, int player_x, int player_y, bool& game, int coins, int coin_x, int coin_y, int map_step_x = 0, int map_step_y = 0) {
+void moveGhost(char** arr, int& ghost_x, int& ghost_y, char vector, int player_x, int player_y, bool& game, int coins, int coin_x, int coin_y, int map_step_x = 0, int map_step_y = 0) {
 
     int distance_x = abs(player_x - ghost_x);
     int distance_y = abs(player_y - ghost_y);

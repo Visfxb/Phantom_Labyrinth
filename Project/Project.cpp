@@ -1,10 +1,9 @@
 ﻿#include <conio.h>
 #include <ctime>
+#include <cstdio>
 #include "Structs.h"
 using namespace std;
 
-const int a = 16;
-const int b = 40;
 
 int main()
 {
@@ -13,28 +12,18 @@ int main()
     setlocale(0, "");
     visibleCursor(false);
 
-    char map[a][b] = {
-        {'+','-','-','-','-','+','-','-','-','-','-','-','-','-','-','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+'},
-        {'|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|'},
-        {'|',' ',' ','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|'},
-        {'|',' ',' ',' ',' ','|',' ',' ',' ',' ','|',' ',' ',' ',' ','+','-','-','-','-','-',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ','|'},
-        {'+','-','-',' ',' ','|',' ',' ',' ',' ','|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ','|'},
-        {'|',' ',' ',' ',' ','|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ','|',' ',' ',' ',' ','|',' ',' ',' ',' ','|'},
-        {'|',' ',' ','-','-','+',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ','+','-','-','-','-','+','-','-','-','-','+'},
-        {'|',' ',' ',' ',' ','|',' ',' ',' ',' ','+','-','-','-','-','-','-','-','+',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ','|'},
-        {'+','-','-',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ','|'},
-        {'|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ','+','-','-','-','-',' ',' ',' ',' ','|',' ',' ',' ',' ','|'},
-        {'|',' ',' ','-','-','+',' ',' ',' ',' ','-','-','-','+',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|'},
-        {'|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|'},
-        {'|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ','+','-','-','-','-','-','-',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|'},
-        {'|',' ',' ',' ',' ','+','-','-','-','-','-','-','-','+',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|'},
-        {'|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|'},
-        {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+','-','-','-','-','-','-','-','-','-','+','-','-','-','-','-','-','-','-','-','-','+'}
-    };
-    int pause_x = 3;
-    int pause_y = 25;
+
+    bool isFirstLine = true;
     bool inGame = true;
     bool isPause = false;
+    bool confirm = false;
+
+    int row = 0;
+    int col = 0;
+    int x = 0;
+    int y = 0;
+    int pause_x = 3;
+    int pause_y = 25;
     int map_step_x = 1;
     int map_step_y = 0;
     int profile_size = 0;
@@ -43,12 +32,46 @@ int main()
 
     char p[20] = "";
     char src[20] = "";
-    bool asd = false;
     char str[] = "NONE";
+    char c;
 
+    FILE* map_file = nullptr;
     profile* profiles = new profile[profile_size];
     profile new_profile;
     savedGame testSave;
+    
+    fopen_s(&map_file, "map.txt", "r");
+    if (map_file == nullptr) {
+        cout << "Error: unable to open file!" << endl;
+        return 1;
+    }
+
+    while (fscanf_s(map_file, "%c", &c, 1) == 1) {
+        if (c == '\n') {
+            row++;
+            isFirstLine = false;
+        }
+        else if (isFirstLine)
+            col++;
+    }
+    row++;
+    
+    char** map = new char* [row];
+    for (int i = 0; i < row; i++)
+        map[i] = new char[col];
+
+    rewind(map_file);
+    while (fscanf_s(map_file, "%c", &c, 1) == 1) {
+        if (c != '\n') {
+            map[x][y++] = c;
+        }
+        else {
+            x++;
+            y = 0;
+        }
+    }
+    fclose(map_file);
+
 
 
     /*printLogo(3, 35);
@@ -78,7 +101,7 @@ int main()
             printStr(0, 0, "$     COINS: ");
             printStr(0, 13, testSave.coins);
 
-            printMap(map, a, b, map_step_x, map_step_y);
+            printMap(map, row, col, map_step_x, map_step_y);
             printStr(testSave.player_pos_x, testSave.player_pos_y, '@', map_step_x, map_step_y);
             printStr(testSave.ghost_pos_x, testSave.ghost_pos_y, '#', map_step_x, map_step_y);
             printStr(testSave.coin_pos_x, testSave.coin_pos_y, '$', map_step_x, map_step_y);
@@ -125,7 +148,7 @@ int main()
                         }
                         printStr(0, 0, "$     COINS: ");
                         printStr(0, 13, testSave.coins);
-                        printMap(map, a, b, map_step_x, map_step_y);
+                        printMap(map, row, col, map_step_x, map_step_y);
                         printStr(testSave.player_pos_x, testSave.player_pos_y, '@', map_step_x, map_step_y);
                         printStr(testSave.ghost_pos_x, testSave.ghost_pos_y, '#', map_step_x, map_step_y);
                         printStr(testSave.coin_pos_x, testSave.coin_pos_y, '$', map_step_x, map_step_y);
@@ -200,17 +223,17 @@ int main()
             strcpy_s(p, "");
             while (true) {
                 if (strcmp(src, "") && strcmp(p, "")) {
-                    asd = false;
+                    confirm = false;
                     h = -1;
                     for (int i = 0; i < profile_size; i++)
                     {
                         if (!strcmp(profiles[i].nickname, src) && !strcmp(profiles[i].password, p)) {
-                            asd = true;
+                            confirm = true;
                             h = i;
                             break;
                         }
                     }
-                    if (asd) {
+                    if (confirm) {
                         printButton("ENTER", 15, 0, 0);
                         switch (_getch())
                         {
@@ -322,6 +345,10 @@ int main()
                                 system("cls");
                                 goto log;
                                 break;
+
+                            case 27:
+                                system("cls");
+
                             }
                         }
 
@@ -365,6 +392,8 @@ int main()
     
         
 
-
+    for (int i = 0; i < row; i++)
+        delete[] map[i];
+    delete[] map;
     return 0;
 }

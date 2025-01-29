@@ -18,10 +18,10 @@ void printLogo(int x, int y) {
 
 
 
-void printMap(char arr[16][40], int height, int width, int x = 0, int y = 0) {
-    for (int i = 0; i < height; i++)
+void printMap(char** arr, int row, int col, int x = 0, int y = 0) {
+    for (int i = 0; i < row; i++)
     {
-        for (int j = 0; j < width; j++)
+        for (int j = 0; j < col; j++)
             printStr(x + i, y + j, arr[i][j]);
         cout << endl;
     }
