@@ -1,5 +1,4 @@
-﻿#include "BaseFunc.h"
-#include <string>
+﻿#include "Structs.h"
 #pragma once
 
 
@@ -29,23 +28,23 @@ void printMap(char** arr, int row, int col, int x = 0, int y = 0) {
 
 
 
-void printButton(string str, int width, int x, int y) {
-    printStr(x, y, ".");
+void printButton(string str, int width, int x, int y, int color = 7, int background = 0) {
+    printStr(x, y, ".", 0, 0, color, background);
     for (int i = y + 1; i < y + width - 1; i++)
-        printStr(x, i, "-");
-    printStr(x++, y + width - 1, ".");
+        printStr(x, i, "-", 0, 0, color, background);
+    printStr(x++, y + width - 1, ".", 0, 0, color, background);
 
     for (int i = x; i < x + 3; i++)
     {
-        printStr(i, y, "|");
-        printStr(i, y + width - 1, "|");
+        printStr(i, y, "|", 0, 0, color, background);
+        printStr(i, y + width - 1, "|", 0, 0, color, background);
     }
     x += 3;
-    printStr(x, y, "'");
+    printStr(x, y, "'", 0, 0, color, background);
     for (int i = y + 1; i < y + width - 1; i++)
-        printStr(x, i, "-");
-    printStr(x++, y + width - 1, "'");
-    printStr(x - 3, y + 1 + (width - 2 - str.length()) / 2, str);
+        printStr(x, i, "-", 0, 0, color, background);
+    printStr(x++, y + width - 1, "'", 0, 0, color, background);
+    printStr(x - 3, y + 1 + (width - 2 - str.length()) / 2, str, 0, 0, color, background);
 }
 
 
@@ -105,24 +104,20 @@ void loadScreen(int x, int y, bool& isGame) {
     Sleep(200);
 }
 
-/*
-void printProfile(bool isActive, int x, int y, char* nick, int record, char* reg_date) {
-    if (isActive) {
-        printStr(x, y, "NICKNAME - ");
-        printStr(x++, y + 11, nick);
-        printStr(x, y, "RECORD - ");
-        printStr(x++, y + 9, record);
-        printStr(x, y, "REGISTRAITION DATE - ");
-        printStr(x++, y + 21, reg_date);
+
+void printMenu(bool isLog) {
+    printLogo(1, 35);
+    if (!isLog)
+    {
+        printStr(11, 15, "YOU NEED LOG IN");
+        printButton("1 - NEW GAME", 25, 13, 10, 8, 0);
+        printButton("2 - CONTINUE", 25, 13, 43, 8, 0);
     }
     else
-}*/
-
-
-void printMenu(char* str) {
-    printLogo(1, 35);
-    printButton("1 - NEW GAME", 25, 13, 10);
-    printButton("2 - CONTINUE", 25, 13, 43);
+    {
+        printButton("1 - NEW GAME", 25, 13, 10);
+        printButton("2 - CONTINUE", 25, 13, 43);
+    }
     printButton("3 - PROFILES", 25, 13, 76);
     printButton("1 - NEW GAME", 25, 20, 10);
     printButton("2 - CONTINUE", 25, 20, 43);

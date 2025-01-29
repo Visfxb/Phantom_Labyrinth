@@ -1,9 +1,4 @@
-﻿#include <conio.h>
-#include <ctime>
-#include <cstdio>
-#include "Structs.h"
-using namespace std;
-
+﻿#include "Functions.h"
 
 int main()
 {
@@ -79,15 +74,26 @@ int main()
     system("cls");*/
     while (inGame)
     {
-    mm:
+    mainMenu:
         if (active_profile_id == -1)
-            printMenu(str);
+            printMenu(false);
         else
-            printMenu(profiles[active_profile_id].nickname);
+            printMenu(true);
+        if (active_profile_id != -1) {
+            printStr(0, 0, "NICKNAME - ");
+            printStr(0, 11, profiles[active_profile_id].nickname);
+            printStr(1, 0, "RECORD - ");
+            printStr(1, 9, profiles[active_profile_id].record);
+        }
+        else
+            printStr(0, 0, "Not logged");
+
         switch (_getch())
         {
 
         case '1':   //New game
+            if (active_profile_id == -1)
+                break;
             buttonAnimation("1 - NEW GAME", 25, 13, 10);
             system("cls");
             testSave.newGame();
@@ -142,7 +148,7 @@ int main()
                             case '2':
                                 buttonAnimation("2 - SAVE AND EXIT", 30, 15, 30);
                                 system("cls");
-                                goto mm;
+                                goto mainMenu;
                                 break;
                             }
                         }
@@ -174,22 +180,6 @@ int main()
                         moveGhost(map, testSave.ghost_pos_x, testSave.ghost_pos_y, testSave.ghost_vector, testSave.player_pos_x, testSave.player_pos_y, inGame, testSave.coins, testSave.coin_pos_x, testSave.coin_pos_y, map_step_x, map_step_y);
                     }
                 }
-                /*
-                Dollar animation
-
-                static clock_t last_animation_time = clock();
-                if (clock() - last_animation_time >= 500) {
-                    last_animation_time = clock();
-                    if (dollCymbol) {
-                        printStr(0, 0, '|');
-                        dollCymbol = false;
-                    }
-                    else {
-                        cout << '$';
-                        dollCymbol = true;
-                    }
-                }*/
-
             }
             while (!inGame) {
                 switch (_getch())
@@ -198,7 +188,7 @@ int main()
                     buttonAnimation("1 - MAIN MENU", 30, 13, 30);
                     system("cls");
                     inGame = true;
-                    goto mm;
+                    goto mainMenu;
                     break;
                 case '2':
                     buttonAnimation("2 - RESTART", 30, 19, 30);
@@ -210,6 +200,8 @@ int main()
             }
             break;
         case '2':    //Continue
+            if (active_profile_id == -1)
+                break;
             buttonAnimation("2 - CONTINUE", 25, 13, 43);
             system("cls");
             goto labyrinth;
@@ -221,31 +213,31 @@ int main()
             log:
             printLogMenu();
             strcpy_s(p, "");
-            while (true) {
-                if (strcmp(src, "") && strcmp(p, "")) {
+            while (true)
+            {
+                if (strcmp(src, "") && strcmp(p, ""))
+                {
                     confirm = false;
-                    h = -1;
                     for (int i = 0; i < profile_size; i++)
-                    {
                         if (!strcmp(profiles[i].nickname, src) && !strcmp(profiles[i].password, p)) {
                             confirm = true;
                             h = i;
                             break;
                         }
-                    }
                     if (confirm) {
-                        printButton("ENTER", 15, 0, 0);
+                        printStr(11, 0, "                              ");
+                        printButton("ENTER", 15, 12, 87);
                         switch (_getch())
                         {
                         case 13:
-                            buttonAnimation("ENTER", 15, 0, 0);
+                            buttonAnimation("ENTER", 15, 12, 87);
                             active_profile_id = h;
                             system("cls");
-                            goto mm;
+                            goto mainMenu;
                         }
                     }
                     else {
-                        printStr(5, 0, "INCORRECT NICKNAME OF PASSWORD");
+                        printStr(11, 0, "INCORRECT NICKNAME OF PASSWORD");
                         strcpy_s(src, "");
                         strcpy_s(p, "");
                         printStr(11, 54, "                    ");
@@ -298,6 +290,7 @@ int main()
                                             printStr(8, 12, "! THIS NAME IS TAKEN");
                                             printStr(9, 12, "   CHOOSE ANOTHER");
                                             printStr(9, 56, "                    ");
+                                            printStr(10, 56, "                    ");
                                             strcpy_s(new_profile.nickname, "");
                                             isTaken = true;
                                             break;
@@ -362,7 +355,7 @@ int main()
                                     strcpy_s(new_profile.password, "");
                                     active_profile_id = profile_size - 1;
                                     system("cls");
-                                    goto mm;
+                                    goto mainMenu;
                                     break;
                                 }
                             }
@@ -372,7 +365,7 @@ int main()
 
                 case 27:
                     system("cls");
-                    goto mm;
+                    goto mainMenu;
                 }
 
             }

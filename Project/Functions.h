@@ -1,6 +1,5 @@
 ﻿#include "ArrayTemplate.h"
 #include "Frontend.h"
-#include <cmath>
 #pragma once
 
 

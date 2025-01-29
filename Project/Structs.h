@@ -1,4 +1,4 @@
-#include "Functions.h"
+#include "BaseFunc.h"
 #pragma once
 
 struct Date {
@@ -82,17 +82,5 @@ struct profile {
         cout << "Enter password: ";
         cin.getline(password, 20);
         date_reg.getNowDate();
-    }
-
-    void printProfile() {
-        cout << endl << "Name: " << nickname << endl;
-        cout << "Password: " << password << endl;
-        cout << "Date reg: " << date_reg.toString() << endl;
-        for (int i = 0; i < achiev_arr_size; i++)
-        {
-            achiev_arr[i].printAchiev();
-            cout << endl;
-        }
-        cout << "\n\n\n";
     }
 };
